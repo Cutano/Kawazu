@@ -1,0 +1,11 @@
+bin/
+obj/
+/packages/
+riderModule.iml
+/_ReSharper.Caches/
+
+# Jetbrain Rider Cache
+.idea/
+
+# Visual Studio cache directory
+.vs/
