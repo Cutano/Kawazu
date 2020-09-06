@@ -4,4 +4,9 @@
         <TargetFramework>netcoreapp3.1</TargetFramework>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="LibNMeCab" Version="0.10.0" />
+      <PackageReference Include="LibNMeCab.IpaDicBin" Version="0.10.0" />
+    </ItemGroup>
+
 </Project>

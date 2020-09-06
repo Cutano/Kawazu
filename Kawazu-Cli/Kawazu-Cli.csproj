@@ -6,4 +6,8 @@
         <RootNamespace>Kawazu</RootNamespace>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Kawazu\Kawazu.csproj" />
+    </ItemGroup>
+
 </Project>
