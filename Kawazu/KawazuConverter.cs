@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using NMeCab.Specialized;
 
@@ -6,7 +7,7 @@ namespace Kawazu
 {
     public class KawazuConverter
     {
-        private MeCabIpaDicTagger _tagger;
+        private readonly MeCabIpaDicTagger _tagger;
 
         public KawazuConverter()
         {
@@ -25,117 +26,197 @@ namespace Kawazu
             {
                 var nodes = _tagger.Parse(str); // Parse
                 var builder = new StringBuilder();
+                var text = nodes.Select(node => new Division(node, Utilities.GetTextType(node.Surface), system))
+                    .ToList();
                 switch (to)
                 {
                     case To.Romaji:
+                        var isPreviousEndsInTsu = false;
                         switch (mode)
                         {
                             case Mode.Normal:
-                                foreach (var node in nodes) // 形態素ノード配列を順に処理
+                                foreach (var division in text)
                                 {
-                                    builder.Append(string.IsNullOrEmpty(node.Reading) ? node.Surface : node.Reading);
+                                    if (division.IsEndsInTsu)
+                                    {
+                                        isPreviousEndsInTsu = true;
+                                        continue;
+                                    }
+
+                                    if (isPreviousEndsInTsu)
+                                    {
+                                        builder.Append(division.RomaReading.First());
+                                        isPreviousEndsInTsu = false;
+                                    }
+                                    builder.Append(division.RomaReading);
                                 }
-                                return Utilities.ToRawRomaji(builder.ToString(), system);
+                                break;
                             case Mode.Spaced:
-                                foreach (var node in nodes) // 形態素ノード配列を順に処理
+                                foreach (var division in text)
                                 {
-                                    builder.Append(string.IsNullOrEmpty(node.Reading) ? node.Surface : node.Reading);
-                                    builder.Append(" ");
+                                    if (division.IsEndsInTsu)
+                                    {
+                                        isPreviousEndsInTsu = true;
+                                        continue;
+                                    }
+
+                                    if (isPreviousEndsInTsu)
+                                    {
+                                        builder.Append(division.RomaReading.First());
+                                        isPreviousEndsInTsu = false;
+                                    }
+                                    builder.Append(division.RomaReading).Append(" ");
                                 }
-                                return Utilities.ToRawRomaji(builder.ToString(), system);
-                            case Mode.Furigana:
                                 break;
                             case Mode.Okurigana:
-                                foreach (var node in nodes) // 形態素ノード配列を順に処理
+                                foreach (var ele in text.SelectMany(division => division))
                                 {
-                                    if (string.IsNullOrEmpty(node.Reading))
-                                        builder.Append(node.Surface);
+                                    if (ele.Type == TextType.PureKanji)
+                                    {
+                                        builder.Append(ele.Element).Append(delimiterStart).Append(ele.RomaNotation)
+                                            .Append(delimiterEnd);
+                                    }
                                     else
                                     {
-                                        builder.Append(node.Surface);
-                                        builder.Append(delimiterStart);
-                                        builder.Append(node.Reading);
-                                        builder.Append(delimiterEnd);
+                                        builder.Append(ele.Element);
                                     }
                                 }
-                                return Utilities.ToRawRomaji(builder.ToString(), system);
+                                break;
+                            case Mode.Furigana:
+                                foreach (var ele in text.SelectMany(division => division))
+                                {
+                                    if (ele.Type == TextType.PureKanji)
+                                    {
+                                        builder.Append("<ruby>").Append(ele.Element).Append("<rp>")
+                                            .Append(delimiterStart).Append("</rp>").Append("<rt>")
+                                            .Append(ele.RomaNotation).Append("</rt>").Append("<rp>")
+                                            .Append(delimiterEnd).Append("</rp>").Append("</ruby>");
+                                    }
+                                    else
+                                    {
+                                        if (ele.Element.Last() == 'っ' || ele.Element.Last() == 'ッ')
+                                        {
+                                            builder.Append(ele.Element.Last());
+                                            isPreviousEndsInTsu = true;
+                                            continue;
+                                        }
+
+                                        if (isPreviousEndsInTsu)
+                                        {
+                                            builder.Append("<ruby>").Append(ele.Element).Append("<rp>")
+                                                .Append(delimiterStart).Append("</rp>").Append("<rt>")
+                                                .Append(ele.RomaNotation.First())
+                                                .Append(ele.RomaNotation).Append("</rt>").Append("<rp>")
+                                                .Append(delimiterEnd).Append("</rp>").Append("</ruby>");
+                                            isPreviousEndsInTsu = false;
+                                            continue;
+                                        }
+                                        builder.Append("<ruby>").Append(ele.Element).Append("<rp>")
+                                            .Append(delimiterStart).Append("</rp>").Append("<rt>")
+                                            .Append(ele.RomaNotation).Append("</rt>").Append("<rp>")
+                                            .Append(delimiterEnd).Append("</rp>").Append("</ruby>");
+                                    }
+                                }
+                                break;
                         }
                         break;
                     case To.Katakana:
                         switch (mode)
                         {
                             case Mode.Normal:
-                                foreach (var node in nodes) // 形態素ノード配列を順に処理
+                                foreach (var division in text)
                                 {
-                                    builder.Append(string.IsNullOrEmpty(node.Reading) ? node.Surface : node.Reading);
+                                    builder.Append(division.KataReading);
                                 }
-
-                                return builder.ToString();
+                                break;
                             case Mode.Spaced:
-                                foreach (var node in nodes) // 形態素ノード配列を順に処理
+                                foreach (var division in text)
                                 {
-                                    builder.Append(string.IsNullOrEmpty(node.Reading) ? node.Surface : node.Reading);
-                                    builder.Append(" ");
+                                    builder.Append(division.KataReading).Append(" ");
                                 }
-
-                                return builder.ToString();
-                            case Mode.Furigana:
                                 break;
                             case Mode.Okurigana:
-                                foreach (var node in nodes) // 形態素ノード配列を順に処理
+                                foreach (var ele in text.SelectMany(division => division))
                                 {
-                                    if (string.IsNullOrEmpty(node.Reading))
-                                        builder.Append(node.Surface);
+                                    if (ele.Type == TextType.PureKanji)
+                                    {
+                                        builder.Append(ele.Element).Append(delimiterStart).Append(ele.KataNotation)
+                                            .Append(delimiterEnd);
+                                    }
                                     else
                                     {
-                                        builder.Append(node.Surface);
-                                        builder.Append(delimiterStart);
-                                        builder.Append(node.Reading);
-                                        builder.Append(delimiterEnd);
+                                        builder.Append(ele.Element);
                                     }
                                 }
-
-                                return builder.ToString();
+                                break;
+                            case Mode.Furigana:
+                                foreach (var ele in text.SelectMany(division => division))
+                                {
+                                    if (ele.Type == TextType.PureKanji)
+                                    {
+                                        builder.Append("<ruby>").Append(ele.Element).Append("<rp>")
+                                            .Append(delimiterStart).Append("</rp>").Append("<rt>")
+                                            .Append(ele.KataNotation).Append("</rt>").Append("<rp>")
+                                            .Append(delimiterEnd).Append("</rp>").Append("</ruby>");
+                                    }
+                                    else
+                                    {
+                                        builder.Append(ele.Element);
+                                    }
+                                }
+                                break;
                         }
                         break;
                     case To.Hiragana:
                         switch (mode)
                         {
                             case Mode.Normal:
-                                foreach (var node in nodes) // 形態素ノード配列を順に処理
+                                foreach (var division in text)
                                 {
-                                    builder.Append(string.IsNullOrEmpty(node.Reading) ? node.Surface : node.Reading);
+                                    builder.Append(division.HiraReading);
                                 }
-                                return Utilities.ToRawHiragana(builder.ToString());
+                                break;
                             case Mode.Spaced:
-                                foreach (var node in nodes) // 形態素ノード配列を順に処理
+                                foreach (var division in text)
                                 {
-                                    builder.Append(string.IsNullOrEmpty(node.Reading) ? node.Surface : node.Reading);
-                                    builder.Append(" ");
+                                    builder.Append(division.HiraReading).Append(" ");
                                 }
-                                return Utilities.ToRawHiragana(builder.ToString());
-                            case Mode.Furigana:
                                 break;
                             case Mode.Okurigana:
-                                foreach (var node in nodes) // 形態素ノード配列を順に処理
+                                foreach (var ele in text.SelectMany(division => division))
                                 {
-                                    if (string.IsNullOrEmpty(node.Reading))
-                                        builder.Append(node.Surface);
+                                    if (ele.Type == TextType.PureKanji)
+                                    {
+                                        builder.Append(ele.Element).Append(delimiterStart).Append(ele.HiraNotation)
+                                            .Append(delimiterEnd);
+                                    }
                                     else
                                     {
-                                        builder.Append(node.Surface);
-                                        builder.Append(delimiterStart);
-                                        builder.Append(node.Reading);
-                                        builder.Append(delimiterEnd);
+                                        builder.Append(ele.Element);
                                     }
                                 }
-                                return Utilities.ToRawHiragana(builder.ToString());
+                                break;
+                            case Mode.Furigana:
+                                foreach (var ele in text.SelectMany(division => division))
+                                {
+                                    if (ele.Type == TextType.PureKanji)
+                                    {
+                                        builder.Append("<ruby>").Append(ele.Element).Append("<rp>")
+                                            .Append(delimiterStart).Append("</rp>").Append("<rt>")
+                                            .Append(ele.HiraNotation).Append("</rt>").Append("<rp>")
+                                            .Append(delimiterEnd).Append("</rp>").Append("</ruby>");
+                                    }
+                                    else
+                                    {
+                                        builder.Append(ele.Element);
+                                    }
+                                }
+                                break;
                         }
                         break;
-                            
                 }
 
-                return "";
+                return builder.ToString();
             });
             
             return result;
@@ -164,7 +245,7 @@ namespace Kawazu
         Hepburn
     }
 
-    public enum TextType
+    internal enum TextType
     {
         PureKanji,
         KanjiKanaMixed,

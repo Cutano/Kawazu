@@ -5,60 +5,109 @@ using System.Text.RegularExpressions;
 
 namespace Kawazu
 {
+    /// <summary>
+    /// Tools for analyze.
+    /// </summary>
     public static class Utilities
     {
-        private static int KatakanaHiraganaShift = -96;
-        private static int HiraganaKatakanaShift = 96;
-
+        private const int KatakanaHiraganaShift = -96;
+        private const int HiraganaKatakanaShift = 96;
+        
+        /// <summary>
+        /// Check if the given char is hiragana.
+        /// </summary>
         public static bool IsHiragana(char ch) => ch >= '\u3040' && ch <= '\u309f';
 
+        /// <summary>
+        /// Check if the given char is katakana.
+        /// </summary>
         public static bool IsKatakana(char ch) => ch >= '\u30a0' && ch <= '\u30ff';
 
+        /// <summary>
+        /// Check if the given char is kana.
+        /// </summary>
         public static bool IsKana(char ch) => IsHiragana(ch) || IsKatakana(ch);
         
+        /// <summary>
+        /// Check if the given char is kanji.
+        /// </summary>
         public static bool IsKanji(char ch) => (ch >= '\u4e00' && ch <= '\u9fcf') ||
                                                (ch >= '\uf900' && ch <= '\ufaff') ||
                                                (ch >= '\u3400' && ch <= '\u4dbf');
         
+        /// <summary>
+        /// Check if the given char is Japanese character.
+        /// </summary>
         public static bool IsJapanese(char ch) => IsKana(ch) || IsKanji(ch);
 
+        /// <summary>
+        /// Check if the given string has hiragana.
+        /// </summary>
         public static bool HasHiragana(string str) => str.Any(IsHiragana);
         
+        /// <summary>
+        /// Check if the given string has katakana.
+        /// </summary>
         public static bool HasKatakana(string str) => str.Any(IsKatakana);
         
+        /// <summary>
+        /// Check if the given string has kana.
+        /// </summary>
         public static bool HasKana(string str) => str.Any(IsKana);
         
+        /// <summary>
+        /// Check if the given string has kanji.
+        /// </summary>
         public static bool HasKanji(string str) => str.Any(IsKanji);
         
+        /// <summary>
+        /// Check if the given string has Japanese character.
+        /// </summary>
         public static bool HasJapanese(string str) => str.Any(IsJapanese);
 
+        /// <summary>
+        /// Convert the given string to raw hiragana form.
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns>The hiragana form string</returns>
         public static string ToRawHiragana(string str)
         {
             var strBuilder = new StringBuilder();
             foreach (var ch in str)
             {
-                strBuilder.Append((ch > '\u30a0' && ch < '\u30f7') ? (ch + KatakanaHiraganaShift) : ch);
+                strBuilder.Append((ch > '\u30a0' && ch < '\u30f7') ? (char)(ch + KatakanaHiraganaShift) : ch);
             }
 
             return strBuilder.ToString();
         }
 
+        /// <summary>
+        /// Convert the given string to raw katakana form.
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns>The katakana form string</returns>
         public static string ToRawKatakana(string str)
         {
             var strBuilder = new StringBuilder();
             foreach (var ch in str)
             {
-                strBuilder.Append((ch > '\u3040' && ch < '\u3097') ? (ch + HiraganaKatakanaShift) : ch);
+                strBuilder.Append((ch > '\u3040' && ch < '\u3097') ? (char)(ch + HiraganaKatakanaShift) : ch);
             }
 
             return strBuilder.ToString();
         }
 
+        /// <summary>
+        /// Convert the given string to raw romaji form.
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="system"></param>
+        /// <returns>The romaji form string</returns>
         public static string ToRawRomaji(string str, RomajiSystem system = RomajiSystem.Hepburn)
         {
             var nippon = new Dictionary<string, string>
             {
-                // 数字と記号
+                // Nums & marks
                 {"１", "1"},
                 {"２", "2"},
                 {"３", "3"},
@@ -456,7 +505,7 @@ namespace Kawazu
             };
             var passport = new Dictionary<string, string>
             {
-                // 数字と記号
+                // Nums & marks
                 {"１", "1"},
                 {"２", "2"},
                 {"３", "3"},
@@ -854,7 +903,7 @@ namespace Kawazu
             };
             var hepburn = new Dictionary<string, string>
             {
-                // 数字と記号
+                // Nums & marks
                 {"１", "1"},
                 {"２", "2"},
                 {"３", "3"},
@@ -1325,8 +1374,7 @@ namespace Kawazu
                 }
             }
 
-            regTsu.Replace(builder.ToString(), "$2$2"); // Double the sokuon
-            var result = builder.ToString();
+            var result = regTsu.Replace(builder.ToString(), "$2$2"); // Double the sokuon
             
             // [PASSPORT|HEPBURN] 子音を重ねて特殊表記
             if (system == RomajiSystem.Passport || system == RomajiSystem.Hepburn) {
@@ -1363,7 +1411,10 @@ namespace Kawazu
             return result;
         }
 
-        public static TextType GetTextType(string str)
+        /// <summary>
+        /// Get the character type of given string.
+        /// </summary>
+        internal static TextType GetTextType(string str)
         {
             var hasKanji = false;
             var hasKana = false;
@@ -1389,6 +1440,5 @@ namespace Kawazu
             if (hasKanji) return TextType.PureKanji;
             return TextType.Others;
         }
-        
     }
 }
