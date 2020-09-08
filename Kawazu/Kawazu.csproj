@@ -1,7 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <PackageId>Kawazu</PackageId>
+        <Title>Kawazu</Title>
+        <Description>Kawazu is a C# library for converting Japanese sentence to Hiragana, Katakana or Romaji with furigana and okurigana modes supported. Inspired by project Kuroshiro.</Description>
+        <PackageTags>Japanese;Kana;Kanji;Mecab;Hiragana;Katakana;Furigana;Okurigana</PackageTags>
+        <Version>1.0.0</Version>
+        <Authors>Cutano</Authors>
+        <Company>Cutano</Company>
+        <TargetFrameworks>netstandard2.0;netcoreapp2.1;netcoreapp3.1</TargetFrameworks>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <AssemblyVersion>1.0.0</AssemblyVersion>
+        <AssemblyOriginatorKeyFile>CutanoKey.snk</AssemblyOriginatorKeyFile>
     </PropertyGroup>
 
     <ItemGroup>

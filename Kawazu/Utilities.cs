@@ -1341,7 +1341,7 @@ namespace Kawazu
                                 mStr += $"{str.Substring(indices[i - 1], indices[i] - indices[i - 1])}'";
                             }
                         }
-                        mStr += str.Substring(indices[^1]);
+                        mStr += str.Substring(indices[indices.Count - 1]);
                         str = mStr;
                     }
 

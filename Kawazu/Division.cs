@@ -71,9 +71,9 @@ namespace Kawazu
                         readingBuilder.Remove(0, 1);
                     }
                     
-                    while (Utilities.IsKana(surfaceBuilder[^1])) // Pop the kanas in the end.
+                    while (Utilities.IsKana(surfaceBuilder[surfaceBuilder.Length - 1])) // Pop the kanas in the end.
                     {
-                        kanasInTheEnd.Append(surfaceBuilder[^1].ToString());
+                        kanasInTheEnd.Append(surfaceBuilder[surfaceBuilder.Length - 1].ToString());
                         surfaceBuilder.Remove(surfaceBuilder.Length - 1, 1);
                         readingBuilder.Remove(readingBuilder.Length - 1, 1);
                     }
