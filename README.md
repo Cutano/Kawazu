@@ -45,7 +45,7 @@ Finally you will get the result by:
 var result = await converter.Convert("今晩は", To.Romaji, Mode.Okurigana, RomajiSystem.Hepburn, "(", ")");
 ```
 
-For the “Convert” method is an **async **method, you probably need to make the outer method **async **too:
+For the “Convert” method is an **async** method, you probably need to make the outer method **async** too:
 
 ```c#
 private static async Task Main(string[] args)
