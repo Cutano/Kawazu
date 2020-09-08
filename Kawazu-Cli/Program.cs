@@ -9,6 +9,7 @@ namespace Kawazu
         {
             Console.WriteLine("Kawazu-Cli Japanese Converter Version 1.0.0");
             Console.WriteLine("Type 'exit' to quit");
+            Console.WriteLine();
             
             var converter = new KawazuConverter();
 
