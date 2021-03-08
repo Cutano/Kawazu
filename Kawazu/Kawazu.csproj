@@ -8,7 +8,7 @@
         <Version>1.0.0</Version>
         <Authors>Cutano</Authors>
         <Company>Cutano</Company>
-        <TargetFrameworks>netstandard2.0;netcoreapp2.1;netcoreapp3.1</TargetFrameworks>
+        <TargetFrameworks>net5.0;netcoreapp3.1;netstandard2.0</TargetFrameworks>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <AssemblyVersion>1.0.0</AssemblyVersion>
         <Copyright>© Cutano 2020</Copyright>
@@ -20,7 +20,7 @@
     <ItemGroup>
       <PackageReference Include="LibNMeCab" Version="0.10.0" />
       <PackageReference Include="LibNMeCab.IpaDicBin" Version="0.10.0" />
-        <None Include="Kawazu_icon.png" Pack="true" PackagePath=""/>
+        <None Include="Kawazu_icon.png" Pack="true" PackagePath="" />
     </ItemGroup>
 
 </Project>
