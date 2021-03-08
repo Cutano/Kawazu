@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,13 +11,32 @@ namespace Kawazu
     /// <summary>
     /// The main class of Kawazu library.
     /// </summary>
-    public class KawazuConverter
+    public class KawazuConverter: IDisposable
     {
         private readonly MeCabIpaDicTagger _tagger;
 
         public KawazuConverter()
         {
             _tagger = MeCabIpaDicTagger.Create();
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _tagger?.Dispose();
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        ~KawazuConverter()
+        {
+            Dispose(false);
         }
 
         /// <summary>
