@@ -11,8 +11,8 @@ namespace Kawazu
             Console.WriteLine("Type 'exit' to quit");
             Console.WriteLine();
             
-            var converter = new KawazuConverter();
-
+            using var converter = new KawazuConverter(); // Call KawazuConverter.Dispose() by using statement
+            
             while (true)
             {
                 Console.WriteLine("Original Japanese Sentence:");
