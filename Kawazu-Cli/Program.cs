@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Kawazu
@@ -66,7 +67,13 @@ namespace Kawazu
                     };
                 }
                 var result = await converter.Convert(str, to, mode, system, "(", ")");
+                var pronunciation = new StringBuilder();
+                foreach (var div in await converter.GetDivisions(str, to, mode, system, "(", ")"))
+                {
+                    pronunciation.Append(div.RomaPronunciation);
+                }
                 Console.WriteLine(result);
+                Console.WriteLine($"Pronunciation: {pronunciation}");
                 Console.WriteLine();
             }
         }
