@@ -66,8 +66,15 @@ namespace Kawazu
             switch (type)
             {
                 case TextType.PureKana:
-                    for(var i = 0; i < node.Surface.Length; i++)
-                        Add(new JapaneseElement(node.Surface[i].ToString(), Utilities.ToRawKatakana(node.Surface[i].ToString()), node.Pronounciation[i].ToString(), TextType.PureKana, system));
+                    if (node.Surface.Length == node.Pronounciation.Length)
+                        for (var i = 0; i < node.Surface.Length; i++)
+                            Add(new JapaneseElement(node.Surface[i].ToString(), Utilities.ToRawKatakana(node.Surface[i].ToString()), node.Pronounciation[i].ToString(), TextType.PureKana, system));
+                    else
+                        for (var i = 0; i < node.Surface.Length; i++)
+                        {
+                            var surface = Utilities.ToRawKatakana(node.Surface[i].ToString());
+                            Add(new JapaneseElement(node.Surface[i].ToString(), surface, surface, TextType.PureKana, system));
+                        }
                     break;
                 
                 case TextType.PureKanji:
