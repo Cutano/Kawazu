@@ -57,12 +57,21 @@ namespace Kawazu
         public string RomaReading => Utilities.ToRawRomaji(HiraReading);
         public string RomaPronunciation => Utilities.ToRawRomaji(HiraPronunciation);
 
+        public readonly string PartsOfSpeech;
+        public readonly string PartsOfSpeechSection1;
+        public readonly string PartsOfSpeechSection2;
+        public readonly string PartsOfSpeechSection3;
+
         public readonly bool IsEndsInTsu;
 
         public Division(MeCabIpaDicNode node, TextType type, RomajiSystem system = RomajiSystem.Hepburn)
         {
+            PartsOfSpeech = node.PartsOfSpeech;
+            PartsOfSpeechSection1 = node.PartsOfSpeechSection1;
+            PartsOfSpeechSection2 = node.PartsOfSpeechSection2;
+            PartsOfSpeechSection3 = node.PartsOfSpeechSection3;
             IsEndsInTsu = node.Surface.Last() == 'っ' || node.Surface.Last() == 'ッ';
-            
+
             switch (type)
             {
                 case TextType.PureKana:
