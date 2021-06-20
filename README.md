@@ -24,13 +24,13 @@ Kawazu is a C# library for converting Japanese sentence to Hiragana, Katakana or
 The package can be installed by **NuGet**:
 
 ```powershell
-Install-Package Kawazu -Version 1.0.0
+Install-Package Kawazu
 ```
 
 Or reference it in your project:
 
 ```xml
-<PackageReference Include="Kawazu" Version="1.0.0" />
+<PackageReference Include="Kawazu" Version="1.1.2" />
 ```
 
 The package size is **over 50MB** for it contains dictionary file, please take this in to account when you are building a **size-sensitive** project.
