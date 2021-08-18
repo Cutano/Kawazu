@@ -30,7 +30,7 @@ Install-Package Kawazu
 Or reference it in your project:
 
 ```xml
-<PackageReference Include="Kawazu" Version="1.1.2" />
+<PackageReference Include="Kawazu" Version="1.1.3" />
 ```
 
 The package size is **over 50MB** for it contains dictionary file, please take this in to account when you are building a **size-sensitive** project.
@@ -47,6 +47,12 @@ Then initiate the converter:
 
 ```c#
 var converter = new KawazuConverter();
+```
+
+Or specify a custom dictionary path:
+
+```c#
+var converter = new KawazuConverter(path);
 ```
 
 Finally you will get the result by:
