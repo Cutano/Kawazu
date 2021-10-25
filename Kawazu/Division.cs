@@ -117,10 +117,16 @@ namespace Kawazu
                         var kanaIndex = 0;
                         
                         var kanas = from ele in surfaceBuilder.ToString()
-                            where Utilities.IsKana(ele)
+                            where Utilities.IsKana(ele) && ele != 'ヶ' && ele != 'ケ'
                             select ele;
                         
                         var kanaList = kanas.ToList();
+
+                        if (kanaList.Count == 0)
+                        {
+                            Add(new JapaneseElement(surfaceBuilder.ToString(), readingBuilder.ToString(), pronunciationBuilder.ToString(), TextType.PureKanji, system));
+                            break;
+                        }
                         
                         foreach (var ch in surfaceBuilder.ToString())
                         {
